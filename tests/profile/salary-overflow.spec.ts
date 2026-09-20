@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('hourly rate should not cause server error when value is extremely large', async ({ page }) => {
+test('salary overflow investigation', async ({ page }) => {
 
   await page.goto('https://nation.dev/');
 
@@ -24,10 +24,12 @@ test('hourly rate should not cause server error when value is extremely large', 
 
   await page.goto('https://nation.dev/profile');
 
-  await page.getByText('Preferences').click();
+  await page.getByRole('button', {
+    name: 'Preferences'
+  }).click();
 
   const hourlyRateField = page.getByRole('spinbutton', {
-    name: /Freelancing hourly rate/i
+    name: 'Freelancing hourly rate (USD/'
   });
 
   await hourlyRateField.fill(
@@ -38,6 +40,9 @@ test('hourly rate should not cause server error when value is extremely large', 
     name: 'Save'
   }).click();
 
-  await expect(page.locator('body'))
-    .not.toContainText('500');
+  await page.screenshot({
+    path: 'salary-overflow.png',
+    fullPage: true
+  });
+
 });

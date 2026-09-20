@@ -9,11 +9,11 @@ test('user can login', async ({ page }) => {
 
   await page.getByRole('textbox', {
     name: 'Email address'
-  }).fill('test@test.se');
+  }).fill(process.env.TEST_EMAIL!);
 
   await page.getByRole('textbox', {
     name: 'Password'
-  }).fill('password123');
+  }).fill(process.env.TEST_PASSWORD!);
 
   await page.getByRole('button', {
     name: 'Sign in'
