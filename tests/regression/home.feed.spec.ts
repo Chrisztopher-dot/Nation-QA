@@ -1,23 +1,28 @@
 import { test, expect } from '@playwright/test';
 
-test('user can login', async ({ page }) => {
+test('home feed loads after login', async ({ page }) => {
   await page.goto('https://nation.dev/');
 
   await page.getByRole('link', {
     name: 'Sign in'
   }).click();
 
+  // Ersätt med ditt testkonto
   await page.getByRole('textbox', {
     name: 'Email address'
-  }).fill('test@test.se');
+  }).fill(process.env.TEST_EMAIL!);
 
   await page.getByRole('textbox', {
     name: 'Password'
-  }).fill('password123');
+  }).fill(process.env.TEST_PASSWORD!);
 
   await page.getByRole('button', {
     name: 'Sign in'
   }).click();
 
-  await expect(page).not.toHaveURL(/signin/);
+  await expect(page).toHaveURL(/home/);
+
+  await expect(
+    page.getByText('EARLY ACCESS')
+  ).toBeVisible();
 });
