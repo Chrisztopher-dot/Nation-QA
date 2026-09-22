@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('salary boundary investigation', async ({ page }) => {
+test('future birthday validation', async ({ page }) => {
 
   await page.goto('https://nation.dev/');
 
@@ -25,35 +25,17 @@ test('salary boundary investigation', async ({ page }) => {
   await page.goto('https://nation.dev/profile');
 
   await page.getByRole('button', {
-    name: 'Preferences'
+    name: 'Personal Details'
   }).click();
 
-  const salaryField = page.getByRole('spinbutton', {
-    name: 'Expected full-time salary ('
+  await page.getByRole('button', {
+    name: 'Date of Birth'
+  }).click();
+
+  await page.screenshot({
+    path: 'birthday-datepicker-open.png',
+    fullPage: true
   });
 
-  const values = [
-    '-1',
-    '0',
-    '1',
-    '10',
-    '1000',
-    '10000'
-  ];
-
-  for (const value of values) {
-
-    await salaryField.fill(value);
-
-    await page.getByRole('button', {
-      name: 'Save'
-    }).click();
-
-    await page.screenshot({
-      path: `salary-${value}.png`,
-      fullPage: true
-    });
-
-  }
-
 });
+``

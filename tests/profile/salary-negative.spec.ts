@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('salary validation investigation', async ({ page }) => {
+test('negative salary investigation', async ({ page }) => {
 
   await page.goto('https://nation.dev/');
 
@@ -28,34 +28,38 @@ test('salary validation investigation', async ({ page }) => {
     name: 'Preferences'
   }).click();
 
-  const salaryField = page.getByRole('spinbutton', {
-    name: 'Expected full-time salary ('
+  const hourlyRateField = page.getByRole('spinbutton', {
+    name: /Freelancing hourly rate/i
   });
 
-await salaryField.fill('0');
+  await hourlyRateField.fill('-999999');
 
-await page.getByRole('button', {
-  name: 'Save'
-}).click();
+  await page.getByRole('button', {
+    name: /save/i
+  }).click();
 
-await page.reload();
+  await page.screenshot({
+    path: 'negative-salary-save.png',
+    fullPage: true
+  });
 
-await page.getByRole('button', {
-  name: 'Preferences'
-}).click();
+  await page.reload();
 
-const reloadedField = page.getByRole('spinbutton', {
-  name: 'Expected full-time salary ('
-});
+  await page.getByRole('button', {
+    name: 'Preferences'
+  }).click();
+
+  const reloadedField = page.getByRole('spinbutton', {
+    name: /Freelancing hourly rate/i
+  });
 
 const savedValue =
   await reloadedField.inputValue();
 
 console.log(
-  'Zero salary stored:',
+  'Negative salary stored:',
   JSON.stringify(savedValue)
 );
 
-expect(savedValue).toBe('0');
-
+expect(savedValue).toBe('-999999');
 });

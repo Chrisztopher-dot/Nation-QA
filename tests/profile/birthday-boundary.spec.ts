@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('future birthday investigation', async ({ page }) => {
+test('birthday datepicker investigation', async ({ page }) => {
 
   await page.goto('https://nation.dev/');
 
@@ -28,17 +28,18 @@ test('future birthday investigation', async ({ page }) => {
     name: 'Personal Details'
   }).click();
 
-  const birthdayField = page.getByLabel(/date of birth/i);
-
-console.log(
-  'BIRTHDAY ELEMENT:',
-  await birthdayField.evaluate(el => el.outerHTML)
-);
+  await page.getByRole('button', {
+    name: 'Date of Birth'
+  }).click();
 
   await page.screenshot({
-    path: 'birthday-current-state.png',
+    path: 'birthday-datepicker-open.png',
     fullPage: true
   });
 
+  await expect(
+  page.getByRole('button', {
+    name: 'Date of Birth'
+  })
+).toBeVisible();
 });
-``

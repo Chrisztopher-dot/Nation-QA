@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('salary overflow investigation', async ({ page }) => {
+test('decimal salary investigation', async ({ page }) => {
 
   await page.goto('https://nation.dev/');
 
@@ -36,16 +36,14 @@ test('salary overflow investigation', async ({ page }) => {
     name: /Freelancing hourly rate/i
   });
 
-  await hourlyRateField.fill(
-    '99999999999999999999999999999999999999'
-  );
+  await hourlyRateField.fill('100');
 
   await page.getByRole('button', {
     name: /save/i
   }).click();
 
   await page.screenshot({
-    path: 'salary-after-save.png',
+    path: 'decimal-salary-save.png',
     fullPage: true
   });
 
@@ -62,12 +60,10 @@ test('salary overflow investigation', async ({ page }) => {
   const savedValue =
     await reloadedField.inputValue();
 
-  console.log(
-    'Stored value:',
-    JSON.stringify(savedValue)
-  );
+console.log(
+  'Decimal salary stored:',
+  JSON.stringify(savedValue)
+);
 
-  expect(savedValue).toBe(
-    '99999999999999999999999999999999999999'
-  );
+expect(savedValue).toBe('100.5');
 });

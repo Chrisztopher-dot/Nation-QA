@@ -16,11 +16,11 @@ test('home feed loads after login', async ({ page }) => {
     name: 'Password'
   }).fill(process.env.TEST_PASSWORD!);
 
-  await page.getByRole('button', {
-    name: 'Sign in'
-  }).click();
+await page.getByRole('button', {
+  name: 'Sign in'
+}).click();
 
-  await expect(page).toHaveURL(/home/);
+await expect(page).toHaveURL(/home/);
 
   await expect(
     page.getByText('EARLY ACCESS')
