@@ -1,0 +1,35 @@
+{
+  "cookies": [
+    {
+      "name": "_ga",
+      "value": "GA1.1.1689334259.1790068013",
+      "domain": ".nation.dev",
+      "path": "/",
+      "expires": 1824628015.040735,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__Secure-nation.session_token",
+      "value": "APOZWKjlI4wGLyZnHTyK4b0FanVle70y.ZVaIz3kKVxMKF8oQFu2MyJxEjiGLSBQDPLvKAc9RqTw%3D",
+      "domain": ".nation.dev",
+      "path": "/",
+      "expires": 1791277614.639913,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_43Y73V04FZ",
+      "value": "GS2.1.s1790068013$o1$g1$t1790068015$j58$l0$h0",
+      "domain": ".nation.dev",
+      "path": "/",
+      "expires": 1824628015.054171,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

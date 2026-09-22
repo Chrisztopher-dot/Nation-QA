@@ -1,23 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from './LoginPage';
 
 test('user can login', async ({ page }) => {
-  await page.goto('https://nation.dev/');
 
-  await page.getByRole('link', {
-    name: 'Sign in'
-  }).click();
+  const loginPage = new LoginPage(page);
 
-  await page.getByRole('textbox', {
-    name: 'Email address'
-  }).fill(process.env.TEST_EMAIL!);
+  await loginPage.loginAsTestUser();
 
-  await page.getByRole('textbox', {
-    name: 'Password'
-  }).fill(process.env.TEST_PASSWORD!);
+  await expect(page).toHaveURL(/home/);
 
-  await page.getByRole('button', {
-    name: 'Sign in'
-  }).click();
+  await expect(
+    page.getByText('EARLY ACCESS')
+  ).toBeVisible();
 
-  await expect(page).not.toHaveURL(/signin/);
 });

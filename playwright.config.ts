@@ -9,8 +9,6 @@ dotenv.config({
 /**
  * QA DEBUG CONFIG
  *
- * 2026-09-21
- *
  * Firefox är tillfälligt avstängt eftersom Playwright
  * inte kan starta Firefox lokalt:
  *
@@ -18,9 +16,8 @@ dotenv.config({
  *
  * Chromium och WebKit fungerar.
  *
- * Dessutom körs testerna sekventiellt för att undersöka
- * om flera tester som använder samma testkonto stör
- * varandras sessioner.
+ * Tester körs sekventiellt eftersom samma testkonto
+ * används i flera tester.
  */
 export default defineConfig({
   testDir: './tests',
