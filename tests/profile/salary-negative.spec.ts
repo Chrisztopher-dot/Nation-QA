@@ -1,26 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../auth/LoginPage';
 
 test('negative salary investigation', async ({ page }) => {
 
-  await page.goto('https://nation.dev/');
+  const loginPage = new LoginPage(page);
 
-  await page.getByRole('link', {
-    name: 'Sign in'
-  }).click();
-
-  await page.getByRole('textbox', {
-    name: 'Email address'
-  }).fill(process.env.TEST_EMAIL!);
-
-  await page.getByRole('textbox', {
-    name: 'Password'
-  }).fill(process.env.TEST_PASSWORD!);
-
-  await page.getByRole('button', {
-    name: 'Sign in'
-  }).click();
-
-  await expect(page).toHaveURL(/home/);
+  await loginPage.loginAsTestUser();
 
   await page.goto('https://nation.dev/profile');
 
@@ -53,13 +38,13 @@ test('negative salary investigation', async ({ page }) => {
     name: /Freelancing hourly rate/i
   });
 
-const savedValue =
-  await reloadedField.inputValue();
+  const savedValue =
+    await reloadedField.inputValue();
 
-console.log(
-  'Negative salary stored:',
-  JSON.stringify(savedValue)
-);
+  console.log(
+    'Negative salary stored:',
+    JSON.stringify(savedValue)
+  );
 
-expect(savedValue).toBe('-999999');
+  expect(savedValue).toBe('-999999');
 });

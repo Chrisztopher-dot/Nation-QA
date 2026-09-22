@@ -1,30 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../auth/LoginPage';
 
 test('decimal salary investigation', async ({ page }) => {
 
-  await page.goto('https://nation.dev/');
+  const loginPage = new LoginPage(page);
 
-  await page.getByRole('link', {
-    name: 'Sign in'
-  }).click();
-
-  await page.getByRole('textbox', {
-    name: 'Email address'
-  }).fill(process.env.TEST_EMAIL!);
-
-  await page.getByRole('textbox', {
-    name: 'Password'
-  }).fill(process.env.TEST_PASSWORD!);
-
-  await page.getByRole('button', {
-    name: 'Sign in'
-  }).click();
-
-  await page.waitForLoadState('networkidle');
-
-  await expect(page).toHaveURL(/home/, {
-    timeout: 15000
-  });
+  await loginPage.loginAsTestUser();
 
   await page.goto('https://nation.dev/profile');
 
@@ -60,10 +41,10 @@ test('decimal salary investigation', async ({ page }) => {
   const savedValue =
     await reloadedField.inputValue();
 
-console.log(
-  'Decimal salary stored:',
-  JSON.stringify(savedValue)
-);
+  console.log(
+    'Decimal salary stored:',
+    JSON.stringify(savedValue)
+  );
 
-expect(savedValue).toBe('100.5');
+  expect(savedValue).toBe('100.5');
 });
