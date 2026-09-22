@@ -28,18 +28,16 @@ test('birthday datepicker investigation', async ({ page }) => {
     name: 'Personal Details'
   }).click();
 
-  await page.getByRole('button', {
+  const dobButton = page.getByRole('button', {
     name: 'Date of Birth'
-  }).click();
+  });
+
+  await dobButton.click();
 
   await page.screenshot({
     path: 'birthday-datepicker-open.png',
     fullPage: true
   });
 
-  await expect(
-  page.getByRole('button', {
-    name: 'Date of Birth'
-  })
-).toBeVisible();
+  await expect(dobButton).toBeVisible();
 });
