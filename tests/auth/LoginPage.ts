@@ -1,10 +1,11 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 
 export class LoginPage {
   constructor(private page: Page) {}
 
   async goto() {
     await this.page.goto('https://nation.dev/');
+
     await this.page.getByRole('link', {
       name: 'Sign in'
     }).click();
@@ -22,5 +23,16 @@ export class LoginPage {
     await this.page.getByRole('button', {
       name: 'Sign in'
     }).click();
+  }
+
+  async loginAsTestUser() {
+    await this.goto();
+
+    await this.login(
+      process.env.TEST_EMAIL!,
+      process.env.TEST_PASSWORD!
+    );
+
+    await expect(this.page).toHaveURL(/home/);
   }
 }

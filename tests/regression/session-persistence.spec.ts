@@ -1,28 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../auth/LoginPage';
 
 test('session persists after page reload', async ({ page }) => {
 
-  // Login
-  await page.goto('https://nation.dev/');
+  const loginPage = new LoginPage(page);
 
-  await page.getByRole('link', {
-    name: 'Sign in'
-  }).click();
-
-  await page.getByRole('textbox', {
-    name: 'Email address'
-  }).fill(process.env.TEST_EMAIL!);
-
-  await page.getByRole('textbox', {
-    name: 'Password'
-  }).fill(process.env.TEST_PASSWORD!);
-
-  await page.getByRole('button', {
-    name: 'Sign in'
-  }).click();
-
-  // Bekräfta login
-  await expect(page).toHaveURL(/home/);
+  await loginPage.loginAsTestUser();
 
   // Reload sidan
   await page.reload();
