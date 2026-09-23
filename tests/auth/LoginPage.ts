@@ -35,6 +35,10 @@ export class LoginPage {
       );
     }
 
+    if (/home/.test(this.page.url())) {
+      return;
+    }
+
     await this.goto();
 
     await this.login(email, password);

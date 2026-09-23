@@ -1,6 +1,14 @@
 import { test as setup, expect } from '@playwright/test';
 
 setup('authenticate', async ({ page }) => {
+  const email = process.env.TEST_EMAIL;
+  const password = process.env.TEST_PASSWORD;
+
+  if (!email || !password) {
+    throw new Error(
+      'TEST_EMAIL and TEST_PASSWORD must be set before running authenticated tests.'
+    );
+  }
 
   await page.goto('https://nation.dev/');
 
@@ -10,11 +18,11 @@ setup('authenticate', async ({ page }) => {
 
   await page.getByRole('textbox', {
     name: 'Email address'
-  }).fill(process.env.TEST_EMAIL!);
+  }).fill(email);
 
   await page.getByRole('textbox', {
     name: 'Password'
-  }).fill(process.env.TEST_PASSWORD!);
+  }).fill(password);
 
   await page.getByRole('button', {
     name: 'Sign in'
