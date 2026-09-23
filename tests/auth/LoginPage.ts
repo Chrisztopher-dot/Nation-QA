@@ -4,16 +4,18 @@ export class LoginPage {
   constructor(private page: Page) {}
 
   async goto() {
-    await this.page.goto('https://nation.dev/');
+    await this.page.goto('https://nation.dev/signin');
 
-    const signInLink = this.page.getByRole('link', { name: 'Sign in' });
-    const authenticatedUser = this.page.getByText('Tester', { exact: true });
-
-    if (this.page.url().includes('/home') || await authenticatedUser.isVisible()) {
-      return;
+    if (new URL(this.page.url()).pathname === '/home') {
+      return true;
     }
 
-    await signInLink.click();
+    await expect(this.page).toHaveURL(/\/signin(?:[/?#]|$)/);
+    await expect(this.page.getByRole('textbox', {
+      name: 'Email address'
+    })).toBeVisible();
+    return false;
+    return false;
   }
 
   async login(email: string, password: string) {
@@ -40,14 +42,11 @@ export class LoginPage {
       );
     }
 
-    if (/home/.test(this.page.url()) ||
-        await this.page.getByText('Tester', { exact: true }).isVisible()) {
-      return;
+    const isAuthenticated = await this.goto();
+
+    if (!isAuthenticated) {
+      await this.login(email, password);
     }
-
-    await this.goto();
-
-    await this.login(email, password);
 
     await expect(this.page).toHaveURL(/\/home(?:\/|$)/, {
       timeout: 30_000

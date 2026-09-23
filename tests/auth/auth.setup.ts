@@ -1,4 +1,6 @@
 import { test as setup, expect } from '@playwright/test';
+import { mkdirSync } from 'node:fs';
+import path from 'node:path';
 
 setup('authenticate', async ({ page }) => {
   const email = process.env.TEST_EMAIL;
@@ -10,35 +12,29 @@ setup('authenticate', async ({ page }) => {
     );
   }
 
-  await page.goto('https://nation.dev/');
+  await page.goto('https://nation.dev/signin');
 
-  const signInLink = page.getByRole('link', { name: 'Sign in' });
-  const authenticatedUser = page.getByText('Tester', { exact: true });
+  if (new URL(page.url()).pathname !== '/home') {
+    await page.getByRole('textbox', {
+      name: 'Email address'
+    }).fill(email);
 
-  if (page.url().includes('/home') || await authenticatedUser.isVisible()) {
-    await page.context().storageState({
-      path: 'playwright-auth/user.json'
-    });
-    return;
+    await page.getByRole('textbox', {
+      name: 'Password'
+    }).fill(password);
+
+    await page.getByRole('button', {
+      name: 'Sign in'
+    }).click();
   }
-
-  await signInLink.click();
-
-  await page.getByRole('textbox', {
-    name: 'Email address'
-  }).fill(email);
-
-  await page.getByRole('textbox', {
-    name: 'Password'
-  }).fill(password);
-
-  await page.getByRole('button', {
-    name: 'Sign in'
-  }).click();
 
   await expect(page).toHaveURL(/home/);
 
+  mkdirSync(path.resolve(__dirname, '../../playwright-auth'), {
+    recursive: true
+  });
+
   await page.context().storageState({
-    path: 'playwright-auth/user.json'
+    path: path.resolve(__dirname, '../../playwright-auth/user.json')
   });
 });

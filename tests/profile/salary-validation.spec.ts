@@ -1,45 +1,22 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { LoginPage } from '../auth/LoginPage';
+import { ProfilePage } from './ProfilePage';
 
-test('salary validation investigation', async ({ page }) => {
-
+test('zero salary is rejected without changing the saved value', async ({
+  page,
+}) => {
   const loginPage = new LoginPage(page);
-
   await loginPage.loginAsTestUser();
 
-  await page.goto('https://nation.dev/profile');
+  const profilePage = new ProfilePage(page);
+  await profilePage.openPreferences();
 
-  await page.getByRole('button', {
-    name: 'Preferences'
-  }).click();
-
-  const salaryField = page.getByRole('spinbutton', {
-    name: 'Expected full-time salary ('
+  await profilePage.withPreferenceState(async (originalState) => {
+    await profilePage.savePreferenceState({
+      ...originalState,
+      expectedFullTimeSalary: '0',
+    });
+    await profilePage.reloadPreferences();
+    await profilePage.expectPreferenceState(originalState);
   });
-
-  await salaryField.fill('0');
-
-  await page.getByRole('button', {
-    name: 'Save'
-  }).click();
-
-  await page.reload();
-
-  await page.getByRole('button', {
-    name: 'Preferences'
-  }).click();
-
-  const reloadedField = page.getByRole('spinbutton', {
-    name: 'Expected full-time salary ('
-  });
-
-  const savedValue =
-    await reloadedField.inputValue();
-
-  console.log(
-    'Zero salary stored:',
-    JSON.stringify(savedValue)
-  );
-
-  expect(savedValue).toBe('0');
 });

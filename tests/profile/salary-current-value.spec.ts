@@ -1,27 +1,27 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { LoginPage } from '../auth/LoginPage';
+import { ProfilePage } from './ProfilePage';
 
-test('inspect current salary value', async ({ page }) => {
-
+test('valid salary persists after reload and restores the shared account state', async ({
+  page,
+}) => {
   const loginPage = new LoginPage(page);
-
   await loginPage.loginAsTestUser();
 
-  await page.goto('https://nation.dev/profile');
+  const profilePage = new ProfilePage(page);
+  await profilePage.openPreferences();
 
-  await page.getByRole('button', {
-    name: 'Preferences'
-  }).click();
+  await profilePage.withPreferenceState(async (originalState) => {
+    const updatedState = {
+      ...originalState,
+      expectedFullTimeSalary: '120000',
+    };
 
-  const salaryField = page.getByRole('spinbutton', {
-    name: /Expected full-time salary/i
+    await profilePage.savePreferenceState(updatedState);
+    await profilePage.reloadPreferences();
+    await profilePage.expectPreferenceState(updatedState);
+    expect(updatedState.expectedFullTimeSalary).not.toBe(
+      originalState.expectedFullTimeSalary,
+    );
   });
-
-  const value =
-    await salaryField.inputValue();
-
-  console.log(
-    'CURRENT SALARY VALUE:',
-    JSON.stringify(value)
-  );
 });

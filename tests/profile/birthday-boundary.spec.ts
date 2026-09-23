@@ -1,28 +1,25 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../auth/LoginPage';
+import { ProfilePage } from './ProfilePage';
 
-test('birthday datepicker investigation', async ({ page }) => {
-
+test('date picker retains the saved birthday as its selected year and date', async ({
+  page,
+}) => {
   const loginPage = new LoginPage(page);
-
   await loginPage.loginAsTestUser();
 
-  await page.goto('https://nation.dev/profile');
+  const profilePage = new ProfilePage(page);
+  await profilePage.openPersonalDetails();
 
-  await page.getByRole('button', {
-    name: 'Personal Details'
-  }).click();
+  const dateOfBirth = page.locator('#dateOfBirth');
+  const savedDate = await dateOfBirth.innerText();
+  const yearSelector = await profilePage.openDatePicker();
+  const savedYear = new Date(
+    savedDate.replace(/(\d+)(st|nd|rd|th)/, '$1'),
+  ).getFullYear();
 
-  const dobButton = page.getByRole('button', {
-    name: 'Date of Birth'
-  });
-
-  await dobButton.click();
-
-  await page.screenshot({
-    path: 'birthday-datepicker-open.png',
-    fullPage: true
-  });
-
-  await expect(dobButton).toBeVisible();
+  await expect(yearSelector).toHaveValue(String(savedYear));
+  await expect(
+    page.getByRole('button', { name: new RegExp(savedDate.split(',')[0]) }),
+  ).toBeVisible();
 });

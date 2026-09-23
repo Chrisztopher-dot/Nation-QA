@@ -1,44 +1,21 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
+import { LoginPage } from '../auth/LoginPage';
+import { ProfilePage } from './ProfilePage';
 
-test('future birthday investigation', async ({ page }) => {
+test('date picker does not offer years beyond the current calendar year', async ({
+  page,
+}) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.loginAsTestUser();
 
-  await page.goto('https://nation.dev/');
+  const profilePage = new ProfilePage(page);
+  await profilePage.openPersonalDetails();
 
-  await page.getByRole('link', {
-    name: 'Sign in'
-  }).click();
+  const yearSelector = await profilePage.openDatePicker();
+  const years = await yearSelector.locator('option').evaluateAll((options) =>
+    options.map((option) => Number((option as HTMLOptionElement).value)),
+  );
 
-  await page.getByRole('textbox', {
-    name: 'Email address'
-  }).fill(process.env.TEST_EMAIL!);
-
-  await page.getByRole('textbox', {
-    name: 'Password'
-  }).fill(process.env.TEST_PASSWORD!);
-
-  await page.getByRole('button', {
-    name: 'Sign in'
-  }).click();
-
-  await expect(page).toHaveURL(/home/);
-
-  await page.goto('https://nation.dev/profile');
-
-  await page.getByRole('button', {
-    name: 'Personal Details'
-  }).click();
-
-  const birthdayField = page.getByLabel(/date of birth/i);
-
-console.log(
-  'BIRTHDAY ELEMENT:',
-  await birthdayField.evaluate(el => el.outerHTML)
-);
-
-  await page.screenshot({
-    path: 'birthday-current-state.png',
-    fullPage: true
-  });
-
+  expect(Math.max(...years)).toBe(new Date().getFullYear());
+  expect(years).toContain(1900);
 });
-``

@@ -1,54 +1,22 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { LoginPage } from '../auth/LoginPage';
+import { ProfilePage } from './ProfilePage';
 
-test('salary overflow investigation', async ({ page }) => {
-
+test('overflow hourly rate is rejected without changing the saved value', async ({
+  page,
+}) => {
   const loginPage = new LoginPage(page);
-
   await loginPage.loginAsTestUser();
 
-  await page.goto('https://nation.dev/profile');
+  const profilePage = new ProfilePage(page);
+  await profilePage.openPreferences();
 
-  await page.getByRole('button', {
-    name: 'Preferences'
-  }).click();
-
-  const hourlyRateField = page.getByRole('spinbutton', {
-    name: /Freelancing hourly rate/i
+  await profilePage.withPreferenceState(async (originalState) => {
+    await profilePage.savePreferenceState({
+      ...originalState,
+      freelancingHourlyRate: '99999999999999999999999999999999999999',
+    });
+    await profilePage.reloadPreferences();
+    await profilePage.expectPreferenceState(originalState);
   });
-
-  await hourlyRateField.fill(
-    '99999999999999999999999999999999999999'
-  );
-
-  await page.getByRole('button', {
-    name: /save/i
-  }).click();
-
-  await page.screenshot({
-    path: 'salary-after-save.png',
-    fullPage: true
-  });
-
-  await page.reload();
-
-  await page.getByRole('button', {
-    name: 'Preferences'
-  }).click();
-
-  const reloadedField = page.getByRole('spinbutton', {
-    name: /Freelancing hourly rate/i
-  });
-
-  const savedValue =
-    await reloadedField.inputValue();
-
-  console.log(
-    'Stored value:',
-    JSON.stringify(savedValue)
-  );
-
-  expect(savedValue).toBe(
-    '99999999999999999999999999999999999999'
-  );
 });
