@@ -6,9 +6,14 @@ export class LoginPage {
   async goto() {
     await this.page.goto('https://nation.dev/');
 
-    await this.page.getByRole('link', {
-      name: 'Sign in'
-    }).click();
+    const signInLink = this.page.getByRole('link', { name: 'Sign in' });
+    const authenticatedUser = this.page.getByText('Tester', { exact: true });
+
+    if (this.page.url().includes('/home') || await authenticatedUser.isVisible()) {
+      return;
+    }
+
+    await signInLink.click();
   }
 
   async login(email: string, password: string) {
@@ -35,7 +40,8 @@ export class LoginPage {
       );
     }
 
-    if (/home/.test(this.page.url())) {
+    if (/home/.test(this.page.url()) ||
+        await this.page.getByText('Tester', { exact: true }).isVisible()) {
       return;
     }
 

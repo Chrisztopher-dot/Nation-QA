@@ -12,9 +12,17 @@ setup('authenticate', async ({ page }) => {
 
   await page.goto('https://nation.dev/');
 
-  await page.getByRole('link', {
-    name: 'Sign in'
-  }).click();
+  const signInLink = page.getByRole('link', { name: 'Sign in' });
+  const authenticatedUser = page.getByText('Tester', { exact: true });
+
+  if (page.url().includes('/home') || await authenticatedUser.isVisible()) {
+    await page.context().storageState({
+      path: 'playwright-auth/user.json'
+    });
+    return;
+  }
+
+  await signInLink.click();
 
   await page.getByRole('textbox', {
     name: 'Email address'
