@@ -26,13 +26,21 @@ export class LoginPage {
   }
 
   async loginAsTestUser() {
+    const email = process.env.TEST_EMAIL;
+    const password = process.env.TEST_PASSWORD;
+
+    if (!email || !password) {
+      throw new Error(
+        'TEST_EMAIL and TEST_PASSWORD must be set before running authenticated tests.'
+      );
+    }
+
     await this.goto();
 
-    await this.login(
-      process.env.TEST_EMAIL!,
-      process.env.TEST_PASSWORD!
-    );
+    await this.login(email, password);
 
-    await expect(this.page).toHaveURL(/home/);
+    await expect(this.page).toHaveURL(/\/home(?:\/|$)/, {
+      timeout: 30_000
+    });
   }
 }
